@@ -1,6 +1,6 @@
-# Reservations API
+# Hometime Reservations API
 
-This is a Ruby on Rails API for managing reservations and guests.  
+This is a Ruby on Rails API for creating reservations.  
 The API can accept **two different payload formats** for reservation creation and saves them in a unified `Reservation` model associated with a `Guest`.
 
 ---
