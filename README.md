@@ -29,8 +29,8 @@ The API can accept **two different payload formats** for reservation creation an
 1. **Clone the repository**
 
 ```
-git clone git@github.com:colknives/hometime-reservation.git
-cd reservations_api
+git https://github.com/colknives/hometime-reservation.git
+cd hometime-reservation
 ```
 
 2. **Install dependencies**
