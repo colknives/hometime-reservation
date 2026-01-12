@@ -29,7 +29,8 @@ RSpec.describe Reservations::Create, type: :service do
 
     context "when guest already exists" do
       before do
-        Guest.create!(
+        create(
+          :guest,
           email: guest_email,
           first_name: "Existing",
           last_name: "Guest",
@@ -37,23 +38,45 @@ RSpec.describe Reservations::Create, type: :service do
         )
       end
 
-      it "reuses the existing guest record and updates attributes" do
+      it "reuses the existing guest and updates attributes" do
         response = described_class.call(payload: payload_1)
 
         expect(response.success?).to be(true)
-        expect(response.reservation.guest.first_name).to eq("Wayne") # updates the guest
+        expect(response.reservation.guest.first_name).to eq("Wayne")
         expect(Guest.where(email: guest_email).count).to eq(1)
       end
     end
 
-    context "with invalid payload" do
-      let(:invalid_payload) { { invalid: "data" }.to_json }
+    context "when reservation validations fail" do
+      let(:invalid_payload) do
+        payload = build(:payload1)
+        payload.delete("end_date")
+        payload.delete("status")
+        payload.to_json
+      end
 
-      it "returns a failure response" do
+      it "returns structured validation errors" do
         response = described_class.call(payload: invalid_payload)
 
         expect(response.success?).to be(false)
-        expect(response.errors).to_not be_empty
+        expect(response.errors).to be_a(Hash)
+
+        expect(response.errors).to include(
+          end_date: ["End date can't be blank"],
+          status: ["Status can't be blank"]
+        )
+      end
+    end
+
+    context "with an invalid payload format" do
+      let(:invalid_payload) { { invalid: "data" }.to_json }
+
+      it "returns a base-level error message" do
+        response = described_class.call(payload: invalid_payload)
+
+        expect(response.success?).to be(false)
+        expect(response.errors).to be_an(Array)
+        expect(response.errors.first).to be_a(String)
       end
     end
   end

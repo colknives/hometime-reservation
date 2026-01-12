@@ -163,6 +163,15 @@ Payload 2 Sample:
 
 ```
 {
-  "errors": ["Validation failed: Start date can't be blank"]
+    "errors": [
+        {
+            "source": "start_date",
+            "message": "Start date can't be blank"
+        },
+        {
+            "source": "end_date",
+            "message": "End date can't be blank"
+        }
+    ]
 }
 ```

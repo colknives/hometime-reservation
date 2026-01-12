@@ -16,8 +16,16 @@ module Reservations
 
         ServiceResponse.new(success: true, reservation: reservation)
       end
+    rescue ActiveRecord::RecordInvalid => e
+      ServiceResponse.new(
+        success: false,
+        errors: e.record.errors.to_hash(true)
+      )
     rescue => e
-      ServiceResponse.new(success: false, errors: [e.message])
+      ServiceResponse.new(
+        success: false,
+        errors: [e.message]
+      )
     end
 
     private

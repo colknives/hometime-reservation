@@ -1,4 +1,4 @@
-class Api::V1::ReservationsController < ApplicationController
+class Api::V1::ReservationsController < Api::V1::BaseController
   def create
     result = Reservations::Create.call(payload: request.raw_post)
 
@@ -8,7 +8,9 @@ class Api::V1::ReservationsController < ApplicationController
         .as_json,
         status: :created
     else
-      render json: { errors: result.errors }, status: :unprocessable_entity
+      render json: {
+        errors: Api::V1::ErrorSerializer.serialize(result.errors)
+      }, status: :unprocessable_entity
     end
   end
 end
